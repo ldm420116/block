@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <style type="text/css">
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        img{
+            border:0;
+        }
+        ol, ul ,li{list-style: none;}
+        .left{
+            width: 300px;
+            height: 100%;
+            border-right:1px solid #000;
+        }
+        .left li{
+            text-align: center;
+        }
+        .right{
+            position: absolute;
+            top: 0;
+            left: 320px;
+        }
+        .list{
+            overflow: hidden;
+        }
+        .list li{
+            float: left;
+            margin-right: 10px;
+        }
+        .canvasbox{
+            position: relative;
+            width: 500px;
+            height: 500px;
+        }
+        .kuang{
+            position: absolute;
+            width: 31.25px;
+            height: 31.25px;
+            border: 1px solid red;
+            box-sizing: border-box;
+        }
+        .btn{
+            width: 50px;
+            height: 30px;
+            background: #37fb50;
+        }
+        .code{
+            position: absolute;
+            left: 850px;
+            top: 100px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="left">
+        <ul id="level">
+        </ul>
+        <input type="button" value="添加一个新的关卡" id="create" />
+    </div>
+    <div class="right">
+        <div class="list" id="list">
+            <h1>编辑</h1>
+            <ul>
+                <li><label><input type="radio" checked name="block" id="" /><p style="display:inline-block; width:32px; height:32px; background: black;"></p></label></li>
+                <li><label><input type="radio" name="block" id="" /><img src="R/images/land.png" width="32"></label></li>
+                <li><label><input type="radio" name="block" id="" /><img src="R/images/block.png" width="32"></label></li>
+                <li><label><input type="radio" name="block" id="" /><img src="R/images/endblock.png" width="32"></label></li>
+                <li><label><input type="radio" name="block" id="" /><img src="R/images/down.png" width="32"></label></li>
+                <li><label><input type="radio" name="block" id="" /><img src="R/images/wall.png" width="32"></label></li>
+                <li><label><input type="radio" name="block" id="" /><img src="R/images/end.png" width="32"></label></li>
+            </ul>
+        </div>
+        <div id="canvasbox" class="canvasbox">
+            <span id="kuang" class="kuang"></span>
+            <canvas id="mycanvas" width="500" height="500"></canvas>
+        </div>
+        <button class="btn" id="btn">保存</button>
+    </div>
+    <div class="code" id="code"></div>
+</body>
+</html>
+<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+    var canvas = document.getElementById("mycanvas");
+    var ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,500,500);
+
+    //控制可出现的方块
+    var imgurl = [
+        "R/images/black.png",
+        "R/images/land.png",
+        "R/images/block.png",
+        "R/images/endblock.png",
+        "R/images/down.png",
+        "R/images/wall.png",
+        "R/images/end.png"
+    ];
+
+    var imgarr = [];
+    var imgsum = 0;
+    var imgidx = 0;
+    for (var i = 0; i < imgurl.length; i++) {
+        imgarr[i] = new Image();
+        imgarr[i].src = imgurl[i];
+        $(imgarr[i]).load(function(){
+
+            imgsum++;
+            if(imgsum == imgurl.length){
+
+                //控制canvas所显示的画面
+                $("#canvasbox").mousedown(function(event){
+                    allmouse(event);
+                    $("#canvasbox").mousemove(allmouse);
+                });
+
+                $("#canvasbox").mouseup(function(event){
+                    $("#canvasbox").off("mousemove");
+                });
+            }
+
+        });
+    };
+    $("#list li").click(function(){
+        imgidx = $(this).index();
+    });
+
+    //控制canvas
+    //初始化矩阵
+    var code = [];
+    function init(){
+        code = [];
+        /*for (var i = 0; i < 12; i++){
+            if(i == 0 || i == 11){
+                code.push("555555555555");
+            }else{
+                code.push("500000000005");
+            }
+        };*/
+        for (var i = 0; i < 16; i++) {
+            code.push("0000000000000000")
+        };
+        //矩阵可视化
+        $("#code").html(code.join("<br />"));
+    }
+    init();
+    //鼠标移动红框一起移动
+    $("#mycanvas").mousemove(function(event){
+        var x = event.pageX - $(this).offset().left;
+        var y = event.pageY - $(this).offset().top;
+        var row = parseInt(x / 31.25);
+        var col = parseInt(y / 31.25);
+        $("#kuang").css({"left" : row * 31.25 , "top" : col * 31.25});
+    });
+
+    //控制canvas显示画面的函数
+    function allmouse(event){
+
+        var x = event.pageX - $("#canvasbox").offset().left;
+        var y = event.pageY - $("#canvasbox").offset().top;
+
+        var row = parseInt(x / 31.25);
+        var col = parseInt(y / 31.25);
+
+        change(row,col,imgidx);
+
+        ctx.drawImage(imgarr[imgidx],0,0,64,64,row * 31.25,col * 31.25,31.25,31.25);
+
+    }
+    //点击时控制矩阵数组的函数
+    function change(row,col,idx){
+        var str = "";
+        // str = code[col + 1].substr(0,row + 1) + idx + code[col + 1].substr(row + 2);
+        // code[col + 1] = str;
+
+        //人物只能放置1个
+        if(idx == 4){
+            for (var i = 0; i < 16; i++) {
+                for (var j = 0; j < 16; j++) {
+                    if(code[i][j] == 4){
+                        str = code[i].substr(0,j) + 0 + code[i].substr(j + 1);
+                        code[i] = str;
+                        ctx.drawImage(imgarr[0],0,0,64,64,j * 31.25,i * 31.25,31.25,31.25);
+                    }
+                };
+            };
+        }
+
+        str = code[col].substr(0,row) + idx + code[col].substr(row + 1);
+        code[col] = str;
+
+        $("#code").html(code.join("<br />"));
+    }
+
+    //关卡
+    var guanqia = "";
+
+    //保存
+    $("#btn").click(function(){
+        if(guanqia == ""){
+            alert("请选择要编辑的关卡，或创建一个新关卡");
+            return;
+        }
+        var sum = 0;
+        for (var i = 0; i < 16; i++) {
+            for (var j = 0; j < 16; j++) {
+                if(code[i][j] == 4){
+                    sum++;
+                }
+            };
+        };
+        if(sum != 1){
+            alert("人物未放置或人物放置过多");
+            return;
+        }
+        $.post("php/baocun.php",{
+            arr : JSON.stringify(code),
+            level : guanqia
+        },function(data){
+            alert("保存成功，请强制刷新");
+        });
+    });
+
+    //获取关卡
+    function getlist(){
+        $.get("php/list.php",function(data){
+            var data = JSON.parse(data);
+            data = data.sort(function(a,b){
+                if(a.length > 5){
+                    var str1 = a.substr(0,2);
+                }else{
+                    var str1 = a[0];
+                }
+                if(b.length > 5){
+                    var str2 = b.substr(0,2);
+                }else{
+                    var str2 = b[0];
+                }
+
+                return Number(str2) > Number(str1) ? -1 : 1;
+            });
+            $("#level").empty();
+            for (var i = 0; i < data.length; i++) {
+                var li = $("<li></li>");
+                if(data[i].length > 5){
+                    li.html("第"+data[i].substr(0,2)+"关<button data-level="+data[i].substr(0,2)+">编辑</button>");
+                }else{
+                    li.html("第"+data[i][0]+"关<button data-level="+data[i][0]+">编辑</button>");
+                }
+                li.appendTo($("#level"));
+            };
+        });
+    }
+    getlist();
+
+    //点击编辑时出现的关卡
+    $("#level").delegate("button","click",function(){
+
+        var level = $(this).attr("data-level");
+        guanqia = level;
+        $("#list h1").html("第"+level+"关-编辑");
+
+        $.get("Maps/"+level+".txm",function(data){
+            var data = JSON.parse(data);
+            ctx.fillRect(0,0,500,500);
+            if(data.length == 0){
+                init();
+                return;
+            }
+            code = data;
+            $("#code").html(code.join("<br />"));
+            for (var i = 0; i < 16; i++) {
+                for (var j = 0; j < 16; j++) {
+                    ctx.drawImage(imgarr[data[i][j]],0,0,64,64,j * 31.25,i * 31.25,31.25,31.25)
+                };
+            };
+        });
+    });
+
+    //点击创建新的关卡
+    $("#create").click(function(){
+        $.get("php/create.php",function(){
+            getlist();
+        });
+    });
+</script>

@@ -1,0 +1,29 @@
+{
+    "image":[
+            {"name" : "black" , "url" : "R/images/black.png"},
+            {"name" : "land" , "url" : "R/images/land.png"},
+            {"name" : "block" , "url" : "R/images/block.png"},
+            {"name" : "endblock" , "url" : "R/images/endblock.png"},
+            {"name" : "down" , "url" : "R/images/down.png"},
+            {"name" : "wall" , "url" : "R/images/wall.png"},
+            {"name" : "end" , "url" : "R/images/end.png"},
+            {"name" : "left" , "url" : "R/images/left.png"},
+            {"name" : "right" , "url" : "R/images/right.png"},
+            {"name" : "up" , "url" : "R/images/up.png"},
+            {"name" : "shang" , "url" : "R/images/shang.png"},
+            {"name" : "xia" , "url" : "R/images/xia.png"},
+            {"name" : "reast" , "url" : "R/images/reast.png"},
+            {"name" : "fangxiang" , "url" : "R/images/fangxiang.png"},
+            {"name" : "startbgm" , "url" : "R/images/startbgm.png"},
+            {"name" : "stopbgm" , "url" : "R/images/stopbgm.png"}
+    ],
+    "audio":[
+            {"name" : "bgm1" , "url" : "R/audio/bgm1.mp3"},
+            {"name" : "bgm2" , "url" : "R/audio/bgm2.mp3"},
+            {"name" : "bgm3" , "url" : "R/audio/bgm3.mp3"},
+            {"name" : "bgm4" , "url" : "R/audio/bgm4.mp3"},
+            {"name" : "complete" , "url" : "R/audio/complete.wav"},
+            {"name" : "pace" , "url" : "R/audio/pace.wav"},
+            {"name" : "shove" , "url" : "R/audio/shove.wav"}
+    ]
+}
